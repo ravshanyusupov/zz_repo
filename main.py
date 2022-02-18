@@ -156,8 +156,8 @@ def help(update, context):
                                   f'Vaqt: <b>{i.vaqt}</b>\n'
                                   f'Ro\'yxatdan o\'tgan vaqti: <b>{i.registratsiya_vaqti}</b>')
 
-Token = '5267287419:AAEvQoum_UDHIS82Ur46Id5NKpkIwTd2Viw'
-updater = Updater(Token)
+
+updater = Updater('5267287419:AAEvQoum_UDHIS82Ur46Id5NKpkIwTd2Viw')
 updater.dispatcher.add_handler(CommandHandler('malumotlar', help))
 updater.dispatcher.add_handler(ConversationHandler(
     entry_points=[
@@ -188,8 +188,5 @@ updater.dispatcher.add_handler(ConversationHandler(
     fallbacks=[]
 ))
 
-updater.start_webhook(listen="0.0.0.0",
-                          port=int(PORT),
-                          url_path=Token)
-updater.bot.setWebhook('https://git.heroku.com/telezzbothero.git/' + Token)
+updater.start_polling()
 updater.idle()
