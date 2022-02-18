@@ -15,6 +15,7 @@ from telegram.ext import Updater, CommandHandler, CallbackContext, \
     ConversationHandler, MessageHandler, Filters, CallbackQueryHandler
 
 Last_name_handler, First_name_handler, Phone_number_handler, Courses_handler, Time_handler, Get_all_handler = range(6)
+PORT = int(os.environ.get('PORT', 5000))
 
 
 def start(update, context):
@@ -155,8 +156,8 @@ def help(update, context):
                                   f'Vaqt: <b>{i.vaqt}</b>\n'
                                   f'Ro\'yxatdan o\'tgan vaqti: <b>{i.registratsiya_vaqti}</b>')
 
-
-updater = Updater('5267287419:AAEvQoum_UDHIS82Ur46Id5NKpkIwTd2Viw')
+Token = '5267287419:AAEvQoum_UDHIS82Ur46Id5NKpkIwTd2Viw'
+updater = Updater(Token)
 updater.dispatcher.add_handler(CommandHandler('malumotlar', help))
 updater.dispatcher.add_handler(ConversationHandler(
     entry_points=[
@@ -187,5 +188,8 @@ updater.dispatcher.add_handler(ConversationHandler(
     fallbacks=[]
 ))
 
-updater.start_polling()
+updater.start_webhook(listen="0.0.0.0",
+                          port=int(PORT),
+                          url_path=Token)
+updater.bot.setWebhook('https://git.heroku.com/telezzbothero.git/' + Token)
 updater.idle()
