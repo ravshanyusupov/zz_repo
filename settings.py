@@ -19,10 +19,21 @@ DATABASES = {
 
 
 
-
+"""
+To connect to an existing postgres database, first:
+pip install psycopg2
+then overwrite the settings above with:
 
 DATABASES = {
-    'default': dj_database_url.config()
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'YOURDB',
+        'USER': 'postgres',
+        'PASSWORD': 'password',
+        'HOST': 'localhost',
+        'PORT': '',
+    }
 }
+"""
 
 INSTALLED_APPS = ("db",)
