@@ -9,7 +9,7 @@ import django
 django.setup()
 
 from db.models import Register
-from telegram import Update, ReplyMarkup, KeyboardButton, ReplyKeyboardMarkup, MessageEntity, InlineKeyboardButton, \
+from telegram import Update, KeyboardButton, ReplyKeyboardMarkup, InlineKeyboardButton, \
     InlineKeyboardMarkup
 from telegram.ext import Updater, CommandHandler, CallbackContext, \
     ConversationHandler, MessageHandler, Filters, CallbackQueryHandler
@@ -17,13 +17,13 @@ from telegram.ext import Updater, CommandHandler, CallbackContext, \
 Last_name_handler, First_name_handler, Phone_number_handler, Courses_handler, Time_handler, Get_all_handler = range(6)
 
 
-def start(update: Update, context: CallbackContext):
+def start(update, context):
     update.message.reply_text('Botga xush kelibsiz.')
     update.message.reply_text('Ismingizni kiriting.')
     return First_name_handler
 
 
-def first_name_handler(update: Update, context: CallbackContext):
+def first_name_handler(update, context):
     name = update.message.text
     if name == '/start' or type(name) == int or len(name) < 3:
         update.message.reply_html('<b>Ism xato kiritildi.\n'
@@ -36,12 +36,12 @@ def first_name_handler(update: Update, context: CallbackContext):
         return Last_name_handler
 
 
-def first_name_resend_handler(update: Update, context: CallbackContext):
+def first_name_resend_handler(update, context):
     update.message.reply_text('Xato kiritildi. Qaytadan urinib ko\'ring.')
     return Last_name_handler
 
 
-def last_name_handler(update: Update, context: CallbackContext):
+def last_name_handler(update, context):
     last = update.message.text
     if last == '/start' or type(last) == int or len(last) < 5:
         update.message.reply_html('<b>Familiya xato kiritildi.\n'
@@ -58,7 +58,7 @@ def last_name_handler(update: Update, context: CallbackContext):
         return Phone_number_handler
 
 
-def last_name_resend_handler(update: Update, context: CallbackContext):
+def last_name_resend_handler(update, context):
     update.message.reply_text('Xato nomer kiritildi. Ro\'g\'ri nomer kiriting yoki tugmani bosing.',
                               reply_markup=ReplyKeyboardMarkup([[KeyboardButton('Telefon raqam yuborish',
                                                                                 request_contact=True)]],
@@ -67,7 +67,7 @@ def last_name_resend_handler(update: Update, context: CallbackContext):
     return Phone_number_handler
 
 
-def phone_contact_handler(update: Update, context: CallbackContext):
+def phone_contact_handler(update, context):
     contact = update.message.contact
     context.chat_data.update({
         'phone_number': '+' + contact.phone_number
@@ -87,7 +87,7 @@ def phone_contact_handler(update: Update, context: CallbackContext):
     return Courses_handler
 
 
-def courses_handler(update: Update, context: CallbackContext):
+def courses_handler(update, context):
     c = update.message.text
     if c == 'Web dasturlash' or c == 'Mobil dasturlash' or c == 'Robototexnika' \
             or c == 'Grafik dizayn' or c == 'Moushn dizayn' or c == 'SMM' or c == '3DsMax':
@@ -112,7 +112,7 @@ def courses_handler(update: Update, context: CallbackContext):
                                   '<b>Qaytadan urinib ko\'ring.</b>')
 
 
-def courses_resend_handler(update: Update, context: CallbackContext):
+def courses_resend_handler(update, context):
     update.message.reply_html('Bizda mavjud bulmagan kursni tanladingiz.\n'
                               '<b>Qaytadan urinib ko\'ring.</b>',
                               reply_markup=ReplyKeyboardMarkup([
@@ -128,7 +128,7 @@ def courses_resend_handler(update: Update, context: CallbackContext):
     return Courses_handler
 
 
-def time_handler(update: Update, context: CallbackContext):
+def time_handler(update, context):
     a = update.callback_query
     context.chat_data.update({
         'time': a.data
