@@ -11,7 +11,7 @@ django.setup()
 from db.models import Register
 from telegram import Update, KeyboardButton, ReplyKeyboardMarkup, InlineKeyboardButton, \
     InlineKeyboardMarkup
-from telegram.ext import Updater, CommandHandler, CallbackContext, \
+from telegram.ext import Updater, CommandHandler, \
     ConversationHandler, MessageHandler, Filters, CallbackQueryHandler
 
 Last_name_handler, First_name_handler, Phone_number_handler, Courses_handler, Time_handler, Get_all_handler = range(6)
@@ -19,14 +19,18 @@ PORT = int(os.environ.get('PORT', 5000))
 
 
 def start(update, context):
-    update.message.reply_text('Botga xush kelibsiz.')
+    update.message.reply_text('Botga xush kelibsiz.\n'
+                              'Ro\'yxatdan o\'tish uchun \'/boshlash\' ni bosing.')
+
+
+def boshlash(update, context):
     update.message.reply_text('Ismingizni kiriting.')
     return First_name_handler
 
 
 def first_name_handler(update, context):
     name = update.message.text
-    if name == '/start' or type(name) == int or len(name) < 3:
+    if name == '/start' or type(name) == int or len(name) <= 3:
         update.message.reply_html('<b>Ism xato kiritildi.\n'
                                   'Qaytadan urinib ko\'ring.</b>')
     else:
@@ -158,10 +162,11 @@ def help(update, context):
 
 
 updater = Updater('5267287419:AAEvQoum_UDHIS82Ur46Id5NKpkIwTd2Viw')
+updater.dispatcher.add_handler(CommandHandler('start', start))
 updater.dispatcher.add_handler(CommandHandler('malumotlar', help))
 updater.dispatcher.add_handler(ConversationHandler(
     entry_points=[
-        CommandHandler('start', start),
+        CommandHandler('boshlash', boshlash),
     ],
     states={
         First_name_handler: [
