@@ -30,8 +30,8 @@ def boshlash(update, context):
 
 def first_name_handler(update, context):
     name = update.message.text
-    if name == '/start' or type(name) == int or len(name) <= 3:
-        update.message.reply_html('<b>Ism xato kiritildi.\n'
+    if name == '/start' or type(name) == int or len(name) <= 8:
+        update.message.reply_html('<b>Ism familiya xato kiritildi.\n'
                                   'Qaytadan urinib ko\'ring.</b>')
     else:
         context.chat_data.update({
@@ -54,32 +54,10 @@ def first_name_resend_handler(update, context):
     return Phone_number_handler
 
 
-# def last_name_handler(update, context):
-#     last = update.message.text
-#     if last == '/start' or type(last) == int or len(last) < 5:
-#         update.message.reply_html('<b>Familiya xato kiritildi.\n'
-#                                   'Qaytadan urinib ko\'ring.</b>')
-#     else:
-#         context.chat_data.update({
-#             'last_name': update.message.text
-#         })
-#
-#         return Phone_number_handler
-
-
-# def last_name_resend_handler(update, context):
-#     update.message.reply_text('Xato nomer kiritildi. Ro\'g\'ri nomer kiriting yoki tugmani bosing.',
-#                               reply_markup=ReplyKeyboardMarkup([[KeyboardButton('Telefon raqam yuborish',
-#                                                                                 request_contact=True)]],
-#                                                                resize_keyboard=True,
-#                                                                one_time_keyboard=True))
-#     return Phone_number_handler
-
-
 def phone_contact_handler(update, context):
     contact = update.message.contact
     context.chat_data.update({
-        'phone_number': contact.phone_number
+        'phone_number': '+' + contact.phone_number
     })
     update.message.reply_text('Mavjud kurslarimizdan birini tanlang!',
                               reply_markup=ReplyKeyboardMarkup([
@@ -142,15 +120,6 @@ def time_handler(update, context):
         'time': a.data
     })
     a.message.delete()
-    # print(context.chat_data)
-    # _db = context.chat_data
-    # Register.objects.create(
-    #     ism=_db['first_name'][0:255],
-    #     familya=_db['last_name'][0:255],
-    #     telefon_nomer=_db['phone_number'][0:255],
-    #     kurs=_db['course'][0:255],
-    #     vaqt=_db['time'][0:255],
-    # )
     a.message.reply_text(text='Siz qaysi tuman yoki shahardansiz?',
                               reply_markup=ReplyKeyboardMarkup([
                                   [KeyboardButton('Buxoro shahar'),
@@ -174,17 +143,23 @@ def time_handler(update, context):
 
 def region_handler(update, context):
     region = update.message.text
-    # if region == ''
-    context.chat_data.update({
-        'region': region
-    })
-    keyboard = [
-            InlineKeyboardButton(text='Ha', callback_data='Ha'),
-            InlineKeyboardButton(text='Yoq', callback_data='Yoq'),
-        ],
-    update.message.reply_text('Ushbu loyiha boʻyicha oʻtiladigan bepul darslar Buxoro shahridagi Yoshlar Ishlar Agentligi binosida boʻlib oʻtadi. Siz agentlik binosiga kelib, darslarga offlayn tarzda qatnasha olasizmi?',
-                              reply_markup=InlineKeyboardMarkup(keyboard))
-    return End_handler
+    if region == 'Buxoro shahar' or region == 'Buxoro tuman' or region == 'Olot' or region == 'Galaosiyo'\
+        or region == 'Gʻijduvon' or region == 'Jondor' or region == 'Kogon shahar' or region == 'Kogon tuman'\
+        or region == 'Qorakoʻl' or region == 'Qorovulbozor' or region == 'Yangibozor' or region == 'Romitan'\
+        or region == 'Shofirkon' or region == 'Vobkent':
+        context.chat_data.update({
+            'region': region
+        })
+        keyboard = [
+                InlineKeyboardButton(text='Ha', callback_data='Ha'),
+                InlineKeyboardButton(text='Yoq', callback_data='Yoq'),
+            ],
+        update.message.reply_text('Ushbu loyiha boʻyicha oʻtiladigan bepul darslar Buxoro shahridagi Yoshlar Ishlar Agentligi binosida boʻlib oʻtadi. Siz agentlik binosiga kelib, darslarga offlayn tarzda qatnasha olasizmi?',
+                                  reply_markup=InlineKeyboardMarkup(keyboard))
+        return End_handler
+    else:
+        update.message.reply_html('Mavjud bo\'lmagan tuman yoki shaharni tanladingiz.\n'
+                                  '<b>Qaytadan urinib ko\'ring.</b>')
 
 
 def true_false_handler(update, context):
@@ -193,19 +168,31 @@ def true_false_handler(update, context):
         'javob': response.data
     })
     print(context.chat_data)
-    # if update.callback_query.data == ''
-    response.edit_message_text(text=
-        'Tabriklaymiz, siz muvaffaqqiyatli roʻyhatdan oʻtdingiz. Tez orada administratorlarimiz siz bilan bog’lanishadi!')
-
+    _db = context.chat_data
+    Register.objects.create(
+        ism=_db['first_name'][0:255],
+        telefon_nomer=_db['phone_number'][0:255],
+        kurs=_db['course'][0:255],
+        vaqt=_db['time'][0:255],
+        response=_db['javob'],
+        joyi=_db['region']
+    )
+    if update.callback_query.data == 'Ha':
+        response.edit_message_text(text=
+                                   'Tabriklaymiz, siz muvaffaqqiyatli roʻyhatdan oʻtdingiz. Tez orada administratorlarimiz siz bilan bog’lanishadi!')
+    else:
+        response.edit_message_text(text='Unda sizni online kursimizda kutamiz!\n'
+                                    'https://t.me/+86_bmVKSeHcyYjVi')
 
 def help(update, context):
     db = Register.objects.all()
     for i in db:
-        update.message.reply_html(f'Ism: <b>{i.ism}</b>\n'
-                                  f'Familiya: <b>{i.familya}</b>\n'
+        update.message.reply_html(f'Ism familiya: <b>{i.ism}</b>\n'
                                   f'Telefon nomer: <b>{i.telefon_nomer}</b>\n'
                                   f'Kurs: <b>{i.kurs}</b>\n'
-                                  f'Vaqt: <b>{i.vaqt}</b>\n'
+                                  f'Kurs vaqt: <b>{i.vaqt}</b>\n'
+                                  f'Turar joyi: {i.joyi}\n'
+                                  f'Offlayn darsga kelolishi: {i.response}\n'
                                   f'Ro\'yxatdan o\'tgan vaqti: <b>{i.registratsiya_vaqti}</b>')
 
 
