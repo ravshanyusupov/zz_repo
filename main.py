@@ -196,7 +196,7 @@ def help(update, context):
                                   f'Ro\'yxatdan o\'tgan vaqti: <b>{i.registratsiya_vaqti}</b>')
 
 
-updater = Updater('5267287419:AAEvQoum_UDHIS82Ur46Id5NKpkIwTd2Viw')
+updater = Updater('5165224717:AAE_8zHzEOMaaMLee4ME7_TbM8q65iR67YI')
 updater.dispatcher.add_handler(CommandHandler('start', start))
 updater.dispatcher.add_handler(CommandHandler('malumotlar', help))
 updater.dispatcher.add_handler(ConversationHandler(
